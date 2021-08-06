@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://FlightPath1.gd" type="Script" id=3]
+
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array(  )
+}
+
+[node name="FlightPathA" type="Path2D"]
+curve = SubResource( 1 )
+script = ExtResource( 3 )
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+scale = Vector2( 0.104345, 0.198664 )

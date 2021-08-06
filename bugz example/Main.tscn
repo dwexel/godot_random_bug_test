@@ -1,0 +1,95 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://FlightPathA.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Main.gd" type="Script" id=4]
+
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array(  )
+}
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Path2D
+
+var screen_size = Vector2.ZERO
+var follower_pos = Vector2.ZERO
+var c = Color.red
+var cp_length = 200
+
+func _ready():
+	screen_size = get_viewport_rect().size
+	print(screen_size)
+	
+	position = Vector2.ZERO
+	curve.clear_points()
+	
+	for i in 10:
+		var control_point = Vector2(cp_length, 0).rotated(rand_range(0, PI * 2))
+		curve.add_point(random_point(), control_point, control_point.rotated(PI))
+
+#func _draw():
+#	draw_polyline(curve.get_baked_points(), c, 1, true)
+#	update()
+	
+func random_point():
+	var point = Vector2.ZERO
+	point.x = rand_range(0, screen_size.x)
+	point.y = rand_range(0, screen_size.y)
+	return point
+
+func _process(_delta):
+	follower_pos = $PathFollow2D.position
+	var penultimate_point = curve.get_point_count() - 1
+	var pen_point_position = curve.get_point_position(penultimate_point)
+	var v = follower_pos - pen_point_position
+	
+	if  v.length() < 5:
+		var control_point = Vector2(cp_length, 0).rotated(rand_range(0, PI * 2))
+		curve.add_point(random_point(), control_point, control_point.rotated(PI))
+		print(curve.get_point_count())
+		
+		
+#		draw_polyline(curve.get_baked_points(), c, 1, true)
+#		update()
+
+
+
+
+#just found out that if i stay in my room all the time my life will eventually shrink to the size of it and i will lose all memory of how to function as a person. shocked & upset
+"
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends PathFollow2D
+
+export var speed = 500
+
+func _process(delta):
+	offset +=  delta * speed
+	
+"
+
+[sub_resource type="StreamTexture" id=4]
+flags = 4
+load_path = "res://.import/icon.png-487276ed1e3a0c39cad0279d744ee560.stex"
+
+[sub_resource type="PackedScene" id=5]
+_bundled = {
+"conn_count": 0,
+"conns": PoolIntArray(  ),
+"editable_instances": [  ],
+"names": PoolStringArray( "FlightPathB", "Path2D", "curve", "script", "PathFollow2D", "PathFollow2D", "position", "scale", "script", "speed", "Sprite", "Sprite", "scale", "texture" ),
+"node_count": 3,
+"node_paths": [ NodePath("."), NodePath("./PathFollow2D") ],
+"nodes": PoolIntArray( -1, -1, 1, 0, -1, 2, 2, 0, 3, 1, 0, 1073741824, 0, 5, 4, -1, 4, 6, 2, 7, 3, 8, 4, 9, 5, 0, 1073741825, 0, 11, 10, -1, 2, 12, 6, 13, 7, 0 ),
+"variants": [ SubResource( 1 ), SubResource( 2 ), Vector2( 240.745, 166.126 ), Vector2( 0.32918, 0.322076 ), SubResource( 3 ), 1137, Vector2( 0.494745, -0.638525 ), SubResource( 4 ) ],
+"version": 2
+}
+
+[node name="Main" type="Node"]
+script = ExtResource( 4 )
+moth_scene = ExtResource( 3 )
+bug_scene = SubResource( 5 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+autostart = true
